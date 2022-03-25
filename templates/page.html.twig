@@ -1,7 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ title }} | {{ parent() }}{% endblock %}
+
 {% block body %}
-    <p>{{ title }}</p>
+    <p>{{ title|upper }}</p>
     {# comment me #}
     <ul>
     {% for track in tracks %}
