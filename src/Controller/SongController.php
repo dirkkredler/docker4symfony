@@ -7,7 +7,7 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route("/api/songs/{id}")]
+#[Route("/api/songs/{id<\d+>}", methods: ["GET"])]
 final class SongController
 {
     public function __invoke(int $id): JsonResponse
