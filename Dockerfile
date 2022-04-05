@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y \
   libonig-dev \
   libzip-dev \
   ssl-cert \
-  wget \ 
   && rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod rewrite && a2enmod ssl 

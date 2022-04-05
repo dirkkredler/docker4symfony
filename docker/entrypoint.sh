@@ -3,7 +3,7 @@
 composer install
 composer dump-autoload --optimize --classmap-authoritative
 composer dump-env dev
-yarn install
+# yarn install
  
 bin/console about
 
