@@ -1,14 +1,27 @@
-version: "3.8"
+version: "3.9"
 
 services:
     db:
-        image: mysql:5.7
+        image: mysql:8.0.23
+        ports:
+            - 3308:3306
         environment:
-            - MYSQL_ROOT_PASSWORD=secret
-            - MYSQL_PASSWORD=secret
-            - MYSQL_DATABASE=app_db
+            - MYSQL_ROOT_PASSWORD=
+            - MYSQL_ALLOW_EMPTY_PASSWORD=true
             - MYSQL_USER=app
+            - MYSQL_PASSWORD=password
+            - MYSQL_DATABASE=app
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - mysql_config:/etc/mysql/conf.d
     web:
         build: .
         ports:
             - 8080:80
+            - 8443:443
+        volumes:
+            - ./:/var/www
+
+volumes:
+    mysql_data:
+    mysql_config:
