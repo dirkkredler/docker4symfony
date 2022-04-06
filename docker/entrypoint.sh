@@ -13,7 +13,4 @@ yarn install
 
 chown 1000:1000 . -R
 
-# todo
-# add xdebug? https://github.com/dunglas/symfony-docker/blob/main/docs/xdebug.md
-
 exec "$@"
