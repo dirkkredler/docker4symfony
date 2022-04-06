@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite && a2enmod ssl 
 
-RUN docker-php-ext-install \ 
+RUN docker-php-ext-configure zip && docker-php-ext-install \ 
   exif \
   gd \
   intl \ 
@@ -25,15 +25,18 @@ RUN docker-php-ext-install \
   pdo_mysql \
   zip
 
-RUN pecl install apcu && docker-php-ext-enable apcu 
-
-SHELL ["/bin/bash", "--login", "-c"]
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-RUN nvm install node && npm install -g yarn
+RUN pecl install apcu && docker-php-ext-enable apcu \
+  && echo "apc.enabled=1\napc.enable_cli=1\n" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
+  && echo "[PHP]\ndate.timezone = \"Europe/Berlin\"\n" > /usr/local/etc/php/conf.d/tzone.ini \
+  && ln -s /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY docker/apache.conf /etc/apache2/sites-enabled/000-default.conf 
+
+SHELL ["/bin/bash", "--login", "-c"]
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+RUN nvm install node && npm install -g yarn
 
 WORKDIR /var/www
 COPY . .

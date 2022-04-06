@@ -12,6 +12,7 @@ yarn install
 #symfony console doctrinre:fixtures:load --no-interaction
 
 # todo
+# add xdebug? https://github.com/dunglas/symfony-docker/blob/main/docs/xdebug.md
 # add makefile with --no-cache:
 # build: ## Builds the Docker images
 #    docker-compose build --no-cache
