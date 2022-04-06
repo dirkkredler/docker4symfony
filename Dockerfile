@@ -18,9 +18,10 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-RUN a2enmod rewrite && a2enmod ssl 
+RUN a2enmod rewrite && a2enmod headers && a2enmod ssl 
 
 RUN docker-php-ext-configure zip && docker-php-ext-install \ 
+  bcmath \
   exif \
   gd \
   intl \ 

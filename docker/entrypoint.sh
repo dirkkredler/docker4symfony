@@ -9,7 +9,7 @@ composer dump-env dev
 yarn install
 
 #symfony console doctrine:migrations:migrate --no-interaction
-#symfony console doctrinre:fixtures:load --no-interaction
+#symfony console doctrine:fixtures:load --no-interaction
 
 chown 1000:1000 . -R
 
