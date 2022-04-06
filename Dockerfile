@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
   libicu-dev \
   libonig-dev \
   libzip-dev \
+  make \
   ssl-cert \
   symfony-cli \
   && rm -rf /var/lib/apt/lists/*
@@ -30,9 +31,9 @@ RUN docker-php-ext-configure zip && docker-php-ext-install \
   zip
 
 RUN pecl install apcu && docker-php-ext-enable apcu \
-  && printf "%s\n" "apc.enabled=1" "apc.enable_cli=1" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
-  && printf "%s\n" "[PHP]" "date.timezone = 'Europe/Berlin'" > /usr/local/etc/php/conf.d/tzone.ini \
-  && ln -s /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
+  && printf "%s\n" "apc.enabled=1" "apc.enable_cli=1" >> "$PHP_INI_DIR/conf.d/docker-php-ext-apcu.ini" \
+  && printf "%s\n" "[PHP]" "date.timezone = 'Europe/Berlin'" > "$PHP_INI_DIR/conf.d/tzone.ini" \
+  && ln -s "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY docker/apache.conf /etc/apache2/sites-enabled/000-default.conf 
