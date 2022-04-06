@@ -1,2 +1,11 @@
-/vendor
-/node_modules
+var/
+vendor/
+node_modules/
+.env.*.local
+.env.local
+.env.local.php
+**/.git/
+**/.gitignore
+**/.dockerignore
+**/docker-compose.yaml
+**/Dockerfile

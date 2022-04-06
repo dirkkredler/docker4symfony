@@ -1,5 +1,6 @@
 FROM php:8.1-apache
 
+RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list
 RUN apt-get update && apt-get install -y \ 
   curl \ 
   git \ 
@@ -8,8 +9,10 @@ RUN apt-get update && apt-get install -y \
   libonig-dev \
   libzip-dev \
   ssl-cert \
+  symfony-cli \
   && rm -rf /var/lib/apt/lists/*
 
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite && a2enmod ssl 
 
 RUN docker-php-ext-install \ 

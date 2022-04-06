@@ -1,18 +1,19 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+source ~/.bashrc
  
 composer install
 composer dump-autoload --optimize --classmap-authoritative
 composer dump-env dev
-# yarn install
- 
-bin/console about
 
-#bin/console doc:mig:mig --no-interaction
-#bin/console doc:fix:load --no-interaction
+yarn install
+
+#symfony console doctrine:migrations:migrate --no-interaction
+#symfony console doctrinre:fixtures:load --no-interaction
 
 # todo
-# composer and yarn install
-# user id with group 
-# symfony cli
+# add makefile with --no-cache:
+# build: ## Builds the Docker images
+#    docker-compose build --no-cache
 
 exec "$@"
