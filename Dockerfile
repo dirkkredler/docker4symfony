@@ -1,11 +1,18 @@
 FROM php:8.1-apache
 
-SHELL ["/bin/bash", "--login", "-c"]
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-RUN nvm install node && npm install -g yarn
+ARG NODE_VERSION
+ARG NODE_ARCH
+ARG NODE_PACKAGE=node-v$NODE_VERSION-$NODE_ARCH
+ARG NODE_HOME=/opt/$NODE_PACKAGE
 
-RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list
-RUN apt-get update && apt-get install -y \ 
+ENV NODE_PATH $NODE_HOME/lib/node_modules
+ENV PATH $NODE_HOME/bin:$PATH
+
+RUN curl https://nodejs.org/dist/v$NODE_VERSION/$NODE_PACKAGE.tar.gz | tar -xzC /opt/ \
+  && npm install -g yarn
+
+RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list \
+  && apt-get update && apt-get install -y \ 
   curl \ 
   git \ 
   libgd-dev \ 
@@ -17,8 +24,8 @@ RUN apt-get update && apt-get install -y \
   symfony-cli \
   && rm -rf /var/lib/apt/lists/*
 
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-RUN a2enmod rewrite && a2enmod headers && a2enmod ssl 
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf \
+  && a2enmod rewrite && a2enmod headers && a2enmod ssl 
 
 RUN docker-php-ext-configure zip && docker-php-ext-install \ 
   bcmath \
