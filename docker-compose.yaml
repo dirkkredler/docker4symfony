@@ -2,7 +2,8 @@ version: "3.8"
 
 services:
     database:
-        image: mysql:8.0.28
+        image: mariadb:10.5.15
+        restart: on-failure
         ports:
             - 3308:3306
         environment:
@@ -12,10 +13,11 @@ services:
             - MYSQL_PASSWORD=dev
             - MYSQL_DATABASE=app
         volumes:
-            - mysql_data:/var/lib/mysql
-            - mysql_config:/etc/mysql/conf.d
+            - database_data:/var/lib/mysql
+            - database_config:/etc/mysql/conf.d
     web:
         build: .
+        restart: on-failure
         links:
             - "database:database"
         ports:
@@ -25,5 +27,5 @@ services:
             - ./:/var/www
 
 volumes:
-    mysql_data:
-    mysql_config:
+    database_data:
+    database_config:

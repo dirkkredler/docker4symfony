@@ -36,8 +36,9 @@ RUN pecl install apcu && docker-php-ext-enable apcu \
   && printf "%s\n" "[PHP]" "date.timezone = 'Europe/Berlin'" > "$PHP_INI_DIR/conf.d/tzone.ini" \
   && ln -s "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY docker/symfony.dev.ini "$PHP_INI_DIR/conf.d/" 
 COPY docker/apache.conf /etc/apache2/sites-enabled/000-default.conf 
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 COPY . .
