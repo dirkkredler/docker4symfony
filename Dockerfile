@@ -1,4 +1,4 @@
-FROM php:8.1-apache
+FROM php:8.1-apache AS base
 
 # USER to change the application data in the container
 ARG UNAME
@@ -64,13 +64,23 @@ RUN docker-php-ext-configure zip && docker-php-ext-install \
 
 RUN pecl install apcu && docker-php-ext-enable apcu \
   && printf "%s\n" "apc.enabled=1" "apc.enable_cli=1" >> "$PHP_INI_DIR/conf.d/docker-php-ext-apcu.ini" \
-  && printf "%s\n" "[PHP]" "date.timezone = 'Europe/Berlin'" > "$PHP_INI_DIR/conf.d/tzone.ini" \
-  && ln -s "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+RUN printf "%s\n" "[PHP]" "date.timezone='Europe/Berlin'" > "$PHP_INI_DIR/conf.d/tzone.ini"
+
+RUN ln -s "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 COPY docker/symfony.dev.ini "$PHP_INI_DIR/conf.d/"
 
 # APPLICATION DATA
 WORKDIR /var/www
+
+# DEBUG
+FROM base as debug
+
+RUN pecl install xdebug && docker-php-ext-enable xdebug \
+    && printf "%s\n" "[Xdebug]" "xdebug.mode=debug" > "$PHP_INI_DIR/conf.d/xdebug.ini"
+
+EXPOSE 9000
 
 # SERVICE
 CMD [ "apache2-foreground" ]
