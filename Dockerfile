@@ -74,13 +74,13 @@ COPY docker/symfony.dev.ini "$PHP_INI_DIR/conf.d/"
 # APPLICATION DATA
 WORKDIR /var/www
 
-# DEBUG
+# DEBUG trigger profiling with ?XDEBUG_TRIGGER the output_dir must be writeable
 FROM base as debug
 
 ARG XDEBUG_MODE="coverage,profile"
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug \
-    && printf "%s\n" "[Xdebug]" "xdebug.mode=$XDEBUG_MODE" > "$PHP_INI_DIR/conf.d/xdebug.ini"
+    && printf "%s\n" "[Xdebug]" "xdebug.mode=$XDEBUG_MODE" "xdebug.output_dir=/var/www/profile" "xdebug.start_with_request=trigger" > "$PHP_INI_DIR/conf.d/xdebug.ini"
 
 # SERVICE
 CMD [ "apache2-foreground" ]

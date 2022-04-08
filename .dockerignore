@@ -18,6 +18,7 @@
 
 /tags
 /coverage/
+/profile/
 /migrations/
 
 /node_modules/
