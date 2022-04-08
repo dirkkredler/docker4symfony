@@ -5,8 +5,8 @@ ARG UNAME
 ARG UID
 ARG GID
 
-RUN groupadd -g $GID -o $UNAME
-RUN useradd -m -u $UID -g $GID -G www-data -o -s /bin/bash $UNAME
+RUN groupadd -g $GID -o $UNAME \
+  && useradd -m -u $UID -g $GID -G www-data -o -s /bin/bash $UNAME
 
 ENV UID=$UID
 ENV GID=$GID
@@ -77,10 +77,10 @@ WORKDIR /var/www
 # DEBUG
 FROM base as debug
 
-RUN pecl install xdebug && docker-php-ext-enable xdebug \
-    && printf "%s\n" "[Xdebug]" "xdebug.mode=debug" > "$PHP_INI_DIR/conf.d/xdebug.ini"
+ARG XDEBUG_MODE="coverage,profile"
 
-EXPOSE 9000
+RUN pecl install xdebug && docker-php-ext-enable xdebug \
+    && printf "%s\n" "[Xdebug]" "xdebug.mode=$XDEBUG_MODE" > "$PHP_INI_DIR/conf.d/xdebug.ini"
 
 # SERVICE
 CMD [ "apache2-foreground" ]

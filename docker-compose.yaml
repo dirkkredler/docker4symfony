@@ -33,7 +33,14 @@ services:
             - 8443:443
         volumes:
             - ./:/var/www
+            - profiler_data:/tmp
 
 volumes:
     database_data:
     database_config:
+    profiler_data:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /tmp/profiler_data
