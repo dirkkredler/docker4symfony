@@ -24,7 +24,7 @@ RUN curl https://nodejs.org/dist/v$NODE_VERSION/$NODE_PACKAGE.tar.gz | tar -xzC 
   && npm install -g yarn
 
 # COMPOSER
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.3 /usr/bin/composer /usr/bin/composer
 
 # SYMFONY
 RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list
