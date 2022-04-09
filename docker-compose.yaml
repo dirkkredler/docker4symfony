@@ -20,6 +20,8 @@ services:
             # - NODE_ARCH=linux-x64
             # - XDEBUG_MODE=coverage,profile
         restart: on-failure
+        depends_on:
+            - database
         links:
             - "database:database"
         ports:
