@@ -1,9 +1,9 @@
 FROM php:8.1-apache AS base
 
 # USER to change the application data in the container
-ARG UNAME
-ARG UID
-ARG GID
+ARG UNAME=dev
+ARG UID=1000
+ARG GID=1000
 
 RUN groupadd -g $GID -o $UNAME \
   && useradd -m -u $UID -g $GID -G www-data -o -s /bin/bash $UNAME
@@ -12,8 +12,8 @@ ENV UID=$UID
 ENV GID=$GID
 
 # NODE
-ARG NODE_VERSION
-ARG NODE_ARCH
+ARG NODE_VERSION=16.14.2
+ARG NODE_ARCH=linux-x64
 ARG NODE_PACKAGE=node-v$NODE_VERSION-$NODE_ARCH
 ARG NODE_HOME=/opt/$NODE_PACKAGE
 
@@ -31,8 +31,6 @@ RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sour
 
 # PACKAGES
 RUN apt-get update && apt-get install -y \
-  curl \
-  git \
   libgd-dev \
   libicu-dev \
   libonig-dev \
@@ -40,6 +38,7 @@ RUN apt-get update && apt-get install -y \
   make \
   ssl-cert \
   symfony-cli \
+  zsh \
   && rm -rf /var/lib/apt/lists/*
 
 # HTTPD
