@@ -3,6 +3,7 @@ DOCKER_COMP = docker-compose
 
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec web
+DB_CONT = $(DOCKER_COMP) exec database
 
 # Executables
 PHP      = $(PHP_CONT) php
@@ -11,7 +12,7 @@ SYMFONY  = $(PHP_CONT) symfony console
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        = help build up start down logs sh chown composer vendor sf cc
+.PHONY        = help build clean up start down logs sh mysql chown composer vendor sf cc
 
 help: 
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -34,8 +35,11 @@ down: ## Stop the docker hub
 logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
 
-sh: ## Connect to the web (php and node with apache) container
-	@$(PHP_CONT) sh
+sh: ## Connect with bash to the web (php and node with apache) container
+	@$(PHP_CONT) bash
+
+mysql: ## Connect with mysql client to the database container
+	@$(DB_CONT) mysql
 
 chown: ## Chown to the current host user
 	@$(DOCKER_COMP) exec web chown -R $(shell id -u):$(shell id -g) .
