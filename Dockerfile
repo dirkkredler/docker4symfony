@@ -38,8 +38,6 @@ RUN apt-get update && apt-get install -y \
   make \
   ssl-cert \
   symfony-cli \
-  zsh \
-  vim \
   && rm -rf /var/lib/apt/lists/*
 
 # HTTPD

@@ -1,4 +1,4 @@
-SHELL := /bin/zsh
+SHELL := /bin/bash
 
 t ?= dev
 s ?= 
@@ -40,8 +40,8 @@ down: ## Stop the docker hub
 logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
 
-sh: ## Connect with zsh to the web (php and node with apache) container
-	@$(PHP_CONT) zsh
+sh: ## Connect with bash to the web (php and node with apache) container
+	@$(PHP_CONT) bash
 
 mysql: ## Connect with mysql client to the database container
 	@$(DB_CONT) mysql
