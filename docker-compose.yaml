@@ -7,6 +7,11 @@ services:
         volumes:
             - database_data:/var/lib/mysql
             - database_config:/etc/mysql/conf.d
+    mail:
+        image: ajoergensen/mailhog:latest
+        restart: on-failure
+        ports:
+            - 8025:8025
     web:
         build:
             context: .
@@ -22,8 +27,10 @@ services:
         restart: on-failure
         depends_on:
             - database
+            - mail
         links:
             - "database:database"
+            - "mail:mail"
         ports:
             - 80:80
             - 443:443
