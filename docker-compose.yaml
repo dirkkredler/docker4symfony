@@ -1,6 +1,6 @@
 services:
     database:
-        image: mariadb:10.5
+        image: mariadb:10.5 # mysql:5.7.37 on production
         restart: on-failure
         environment:
             - MYSQL_ALLOW_EMPTY_PASSWORD=true
@@ -25,8 +25,8 @@ services:
         links:
             - "database:database"
         ports:
-            - 8080:80
-            - 8443:443
+            - 80:80
+            - 443:443
         volumes:
             - ./:/var/www
 
