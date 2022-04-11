@@ -1,6 +1,6 @@
 services:
     database:
-        image: mysql:5.7.37
+        image: mysql:5.7
         restart: on-failure
         environment:
             - MYSQL_ALLOW_EMPTY_PASSWORD=true
