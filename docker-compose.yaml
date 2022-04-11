@@ -1,6 +1,6 @@
 services:
     database:
-        image: mariadb:10.5 # mysql:5.7.37 on production
+        image: mysql:5.7.37
         restart: on-failure
         environment:
             - MYSQL_ALLOW_EMPTY_PASSWORD=true
