@@ -109,13 +109,12 @@ test: env
 app: ## update dependencies and build the app 																
 app: c=update
 app: composer
-app: c=dump-autoload --optimize --classmap-authoritative
+app: c="dump-autoload --optimize --classmap-authoritative"
 app: composer
 app: c=dump-env $(t)
 app: composer
-#app: c=assets:install
-#app: sf
 app: cc
+	@$(SYMFONY) assets:install
 	@$(PHP_CONT) yarn install --force
 	@$(PHP_CONT) yarn upgrade
 #	# to initially install fomantic-ui use:
