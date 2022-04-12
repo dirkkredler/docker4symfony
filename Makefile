@@ -59,61 +59,47 @@ vendor: c=install
 vendor: composer
 
 autoload: ## composer dump-autoload
-autoload: c=dump-autoload --optimize --classmap-authoritative
-autoload: composer
+	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
 
 env: ## composer dump-env given environment
-env: c=dump-env $(t)
-env: composer
+	@$(COMPOSER) dump-env $(t)
 
 ## Symfony
 sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
 	@$(eval c ?=)
 	@$(SYMFONY) $(c)
 
-cc: c=c:c ## Clear the cache
-cc: sf
+cc: ## Clear the cache
+	@$(SYMFONY) c:c
 
 ### App
 setup: ## setup database for the given environment
-setup: env
-setup: c=doctrine:database:drop --force
-setup: sf
-setup: c=doctrine:database:create
-setup: sf
-setup: c=doctrine:schema:create
-setup: sf
+	@$(SYMFONY) doctrine:database:drop --force --if-exists
+	@$(SYMFONY) doctrine:database:create
+	@$(SYMFONY) doctrine:schema:create
 
 fixtures: ## doctrine load fixtures
-fixtures: c=doctrine:fixtures:load -n
-fixtures: sf
+	@$(SYMFONY) doctrine:fixtures:load -n
 
 migration: ## doctrine make migration and migrate
-migration: c=make:migration
-migration: sf
+	@$(SYMFONY) make:migration
 
 consume: ## messenger consume
-consume: c=messenger:consume async async_priority_low failed -vv
-consume: sf
+	@$(SYMFONY) messenger:consume async async_priority_low failed -vv
 
 analyse: ## psalm static code analysis 
 	@$(PHP_CONT) ./vendor/bin/psalm --show-info=true $(s)
 
 test: ## phpunit with code-coverage
-test: t=test
-test: env
+	@$(COMPOSER) dump-env test
 	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=coverage/
-test: t=dev
-test: env
+	@$(COMPOSER) dump-env dev
 
 app: ## update dependencies and build the app 																
-app: c=update
-app: composer
-app: c="dump-autoload --optimize --classmap-authoritative"
-app: composer
-app: c=dump-env $(t)
-app: composer
-app: cc
+	@$(COMPOSER) update
+	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
+	@$(COMPOSER) dump-env $(t)
+	@$(SYMFONY) c:c
 	@$(SYMFONY) assets:install
 	@$(PHP_CONT) yarn install --force
 	@$(PHP_CONT) yarn upgrade
