@@ -17,7 +17,7 @@ SYMFONY  = $(PHP_CONT) symfony console
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        = help build clean up start down logs sh mysql chown composer vendor autoload env sf cc setup fixtures migration consume analyse test analyse app 
+.PHONY        = help build clean up start down logs sh mysql chown composer vendor autoload env sf cc setup fixtures migration consume analyse test analyse app fbuild
 
 help: 
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -77,6 +77,7 @@ setup: ## setup database for the given environment
 	@$(SYMFONY) doctrine:database:drop --force --if-exists
 	@$(SYMFONY) doctrine:database:create
 	@$(SYMFONY) doctrine:schema:create
+	@$(SYMFONY) doctrine:fixtures:load --group=setup -n
 
 fixtures: ## doctrine load fixtures
 	@$(SYMFONY) doctrine:fixtures:load -n
@@ -109,4 +110,7 @@ app: ## update dependencies and build the app
 #	#
 #	# adjust src/site/globals/site.variables to your needs
 	@$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js 
+	@$(PHP_CONT) yarn build
+
+fbuild: ## build the frontend
 	@$(PHP_CONT) yarn build
