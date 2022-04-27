@@ -7,6 +7,8 @@ services:
         volumes:
             - database_data:/var/lib/mysql
             - database_config:/etc/mysql/conf.d
+        ports:
+            - 3306:3306
     mail:
         image: ajoergensen/mailhog:latest
         restart: on-failure
