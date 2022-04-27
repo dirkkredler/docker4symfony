@@ -10,5 +10,8 @@
         <li>{{ track.song }} {{ track.artist}} </li>
     {% endfor %}
     </ul>
-    <div data-controller="hello">hey</div>
+    <div data-controller="song">
+        <input data-song-target="name" type="text">
+        <a href="#" data-action="click->song#sayHello">Hello?</a>
+    </div>
 {% endblock %}
