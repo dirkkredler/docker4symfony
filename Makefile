@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 t ?= dev
-s ?= 
+s ?=
 
 # Executables (local)
 DOCKER_COMP = docker-compose
@@ -17,9 +17,9 @@ SYMFONY  = $(PHP_CONT) symfony console
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        = help build clean up start down logs sh mysql chown composer vendor autoload env sf cc setup fixtures migration consume analyse test analyse app fbuild
+.PHONY        = help build clean up start down logs sh mysql chown composer vendor autoload env sf cc setup fixtures migration migrate consume analyse test analyse analyse-clear app fbuild
 
-help: 
+help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
 ## Docker
@@ -80,23 +80,28 @@ setup: ## setup database for the given environment
 	@$(SYMFONY) doctrine:fixtures:load --group=setup -n
 
 fixtures: ## doctrine load fixtures
-	@$(SYMFONY) doctrine:fixtures:load -n
+	@$(SYMFONY) doctrine:fixtures:load --group=test -n
 
-migration: ## doctrine make migration and migrate
+migration: ## doctrine make migration
 	@$(SYMFONY) make:migration
+
+migrate: ## doctrine make migrate
+	@$(SYMFONY) doctrine:migrations:migrate
 
 consume: ## messenger consume
 	@$(SYMFONY) messenger:consume async async_priority_low failed -vv
 
-analyse: ## psalm static code analysis 
+analyse: ## psalm static code analysis
 	@$(PHP_CONT) ./vendor/bin/psalm --show-info=true $(s)
+analyse-clear: ## psalm clear static analysis cache
+	@$(PHP_CONT) ./vendor/bin/psalm --clear-cache
 
 test: ## phpunit with code-coverage
 	@$(COMPOSER) dump-env test
 	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=coverage/
 	@$(COMPOSER) dump-env dev
 
-app: ## update dependencies and build the app 																
+app: ## update dependencies and build the app
 	@$(COMPOSER) update
 	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
 	@$(COMPOSER) dump-env $(t)
@@ -109,7 +114,7 @@ app: ## update dependencies and build the app
 #	# `yarn --cwd node_modules/fomantic-ui run install`
 #	#
 #	# adjust src/site/globals/site.variables to your needs
-	@$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js 
+	@$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js
 	@$(PHP_CONT) yarn build
 
 fbuild: ## build the frontend
