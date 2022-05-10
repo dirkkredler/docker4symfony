@@ -1,121 +1,67 @@
-SHELL := /bin/bash
-
-t ?= dev
-s ?=
-
-# Executables (local)
-DOCKER_COMP = docker-compose
-
-# Docker containers
-PHP_CONT = $(DOCKER_COMP) exec web
-DB_CONT = $(DOCKER_COMP) exec database
-
-# Executables
-PHP      = $(PHP_CONT) php
-COMPOSER = $(PHP_CONT) composer
-SYMFONY  = $(PHP_CONT) symfony console
-
-# Misc
-.DEFAULT_GOAL = help
-.PHONY        = help build clean up start down logs sh mysql chown composer vendor autoload env sf cc setup fixtures migration migrate consume analyse test analyse analyse-clear app fbuild
+SHELL := /bin/zsh
 
 help:
-	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_\-\.]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-## Docker
-build: ## Builds the Docker image
-	@$(DOCKER_COMP) build
+autoload: 																## composer dump-autoload
+	composer dump-autoload --optimize --classmap-authoritative
+	./vendor/bin/psalm --clear-cache
 
-clean: ## Builds a fresh Docker image
-	@$(DOCKER_COMP) build --pull --no-cache
+env: 																	## composer dump-env
+	composer dump-env dev
 
-up: ## Start the docker hub in detached mode (no logs)
-	@$(DOCKER_COMP) up --detach
+unittest: 																	## phpunit and panther tests
+	export APP_ENV=test
+	php ./vendor/bin/phpunit $(s) --testdox --coverage-html=coverage/
 
-start: build up ## Build and start the containers
+applicationtest: 																	## cypress e-2-e tests
+	yarn cypress:run --spec cypress/integration/app_spec.js
+	yarn cypress:open
 
-down: ## Stop the docker hub
-	@$(DOCKER_COMP) down --remove-orphans
+analyse: 																	## phpstan and psalm static-code analysis s=<source>
+	-./vendor/bin/psalm --show-info=true $(s)
+	@echo "\n\n"
+	-./vendor/bin/phpstan analyse $(s)
 
-logs: ## Show live logs
-	@$(DOCKER_COMP) logs --tail=0 --follow
+consume: 															## messenger consume
+	#symfony run -d --watch=config,src,templates,vendor symfony console messenger:consume async failed
+	bin/console messenger:consume async async_priority_low failed -vv
 
-sh: ## Connect with bash to the web (php and node with apache) container
-	@$(PHP_CONT) bash
+migrate: 																    ## make migration and migrate
+	bin/console make:migration
+	bin/console doctrine:migrations:migrate -n
 
-mysql: ## Connect with mysql client to the database container
-	@$(DB_CONT) mysql
+clean-migration: 															## complete clean migration
+	php8.0 bin/console doctrine:database:drop --force
+	php8.0 bin/console doctrine:database:create
+	php8.0 bin/console doctrine:cache:clear-metadata
+	php8.0 bin/console doctrine:cache:clear-result
+	php8.0 bin/console doctrine:cache:clear-query
+	php8.0 bin/console c:c --no-warmup
+	php8.0 bin/console c:c --env=prod --no-warmup
+	-rm migrations/*.php
+	php8.0 bin/console make:migration --env=dev
+	php8.0 bin/console doctrine:migrations:migrate --env=dev
+	php8.0 bin/console app:search-meeting --clear
 
-chown: ## Chown to the current host user
-	@$(DOCKER_COMP) exec web chown -R $(shell id -u):$(shell id -g) .
+build: 																## upgrade dependencies and build app
+	composer update
+	composer dump-autoload --optimize --classmap-authoritative
+	composer dump-env prod
+	yarn upgrade
+	yarn install --force
+	# adjust src/site/globals/site.variables to your needs
+	npx gulp build --gulpfile=semantic/gulpfile.js 
+	yarn build
+	bin/console assets:install public
+	bin/console c:c --no-warmup
+	bin/console c:c --env=prod --no-warmup
+	composer dump-env dev
 
-## Composer
-composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
-	@$(eval c ?=)
-	@$(COMPOSER) $(c)
+clear-search-cache-and-index: 												## clear search cache and index
+	bin/console app:search-meeting --clear
 
-vendor: ## Install vendors according to the current composer.lock file
-vendor: c=install
-vendor: composer
+refactor: 																## refactor with the rules in rector.php
+	vendor/bin/rector
 
-autoload: ## composer dump-autoload
-	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
-
-env: ## composer dump-env given environment
-	@$(COMPOSER) dump-env $(t)
-
-## Symfony
-sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
-	@$(eval c ?=)
-	@$(SYMFONY) $(c)
-
-cc: ## Clear the cache
-	@$(SYMFONY) c:c
-
-### App
-setup: ## setup database for the given environment
-	@$(SYMFONY) doctrine:database:drop --force --if-exists
-	@$(SYMFONY) doctrine:database:create
-	@$(SYMFONY) doctrine:schema:create
-	@$(SYMFONY) doctrine:fixtures:load --group=setup -n
-
-fixtures: ## doctrine load fixtures
-	@$(SYMFONY) doctrine:fixtures:load --group=test -n
-
-migration: ## doctrine make migration
-	@$(SYMFONY) make:migration
-
-migrate: ## doctrine make migrate
-	@$(SYMFONY) doctrine:migrations:migrate
-
-consume: ## messenger consume
-	@$(SYMFONY) messenger:consume async async_priority_low failed -vv
-
-analyse: ## psalm static code analysis
-	@$(PHP_CONT) ./vendor/bin/psalm --show-info=true $(s)
-analyse-clear: ## psalm clear static analysis cache
-	@$(PHP_CONT) ./vendor/bin/psalm --clear-cache
-
-test: ## phpunit with code-coverage
-	@$(COMPOSER) dump-env test
-	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=coverage/
-	@$(COMPOSER) dump-env dev
-
-app: ## update dependencies and build the app
-	@$(COMPOSER) update
-	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
-	@$(COMPOSER) dump-env $(t)
-	@$(SYMFONY) c:c
-	@$(SYMFONY) assets:install
-	@$(PHP_CONT) yarn install --force
-	@$(PHP_CONT) yarn upgrade
-#	# to initially install fomantic-ui use:
-#	# `yarn add fomantic-ui --ignore-scripts`
-#	# `yarn --cwd node_modules/fomantic-ui run install`
-#	#
-#	# adjust src/site/globals/site.variables to your needs
-	@$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js
-	@$(PHP_CONT) yarn build
-
-fbuild: ## build the frontend
-	@$(PHP_CONT) yarn build
+.PHONY: help autload unittest applicationtest analysis consume migrate clean-migration build clear-search-and-index refactor
