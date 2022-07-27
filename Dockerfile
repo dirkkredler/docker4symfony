@@ -61,7 +61,7 @@ RUN docker-php-ext-configure zip && docker-php-ext-install \
   zip
 
 RUN pecl install apcu && docker-php-ext-enable apcu \
-  && printf "%s\n" "apc.enabled=1" "apc.enable_cli=1" >> "$PHP_INI_DIR/conf.d/docker-php-ext-apcu.ini" \
+  && printf "%s\n" "apc.enabled=1" "apc.enable_cli=1" >> "$PHP_INI_DIR/conf.d/docker-php-ext-apcu.ini" 
 
 RUN printf "%s\n" "[PHP]" "date.timezone='Europe/Berlin'" > "$PHP_INI_DIR/conf.d/tzone.ini"
 
