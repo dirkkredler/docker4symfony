@@ -54,10 +54,28 @@ Please check the `Makefile` for additional shortcuts; anyway you can use `docker
 
 and so on.
 
+You can also use your locally installed `php`, `composer` or `symfony` binary, but you should use versions which match the installed binaries in the containers.
+
 The containers use the standard ports, please adjust the `docker-compose.yaml` file to your needs.
 
 The webserver https://localhost, the mailhog http://localhost:8025 and finally your
 your locally installed mysql-client: `mysql --host 127.0.0.1 -u root` should work now.
+
+## Recommended
+
+Add the static analysis tool `psalm` to your installation and enable the symfony psalm plugin:
+
+	$ composer require --dev psalm/plugin-symfony
+	$ vendor/bin/psalm --init
+	$ vendor/bin/psalm-plugin enable psalm/plugin-symfony
+	$ make analysis
+
+Add `phpunit` to your project:
+
+	$ composer require --dev symfony/test-pack
+	$ php bin/phpunit
+
+to use `make test` update the corresponding `Makefile` section to your needs.
 
 ## WIP
 
