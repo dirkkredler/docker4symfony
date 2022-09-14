@@ -33,7 +33,7 @@ Symfony specific `.env.local` settings should be used like this:
 -   `APP_URI='https://localhost'`
 
 Since we use apache, do not forget to `composer require symfony/apache-pack` to add support for the webserver within
-your symfony-app and feel free to add some chaching to your static assets:
+your symfony-app and feel free to add some caching to your static assets:
 
     $ vi public/.htaccess
     ...
