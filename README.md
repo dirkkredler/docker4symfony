@@ -86,3 +86,6 @@ to use `make test` update the corresponding `Makefile` section to your needs.
 -   use docker-compose profile with different webserver and database engines
 -   add production profile / target with all builded artifacts, w/o anything uneeded for production
 -   https://symfony.com/doc/current/deployment.html#how-to-deploy-a-symfony-application
+
+
+License MIT
