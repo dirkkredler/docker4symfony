@@ -2,24 +2,24 @@
 
 ## Installation
 
-	$ cp Dockerfile <your-project>
-	$ cp -r docker <your-project>
-	$ cp docker-compose.yaml <your-project>
-	$ cp .dockerignore <your-project>
+    $ cp Dockerfile <your-project>
+    $ cp -r docker <your-project>
+    $ cp docker-compose.yaml <your-project>
+    $ cp .dockerignore <your-project>
 
 if you would like to use the xdebug-profiler and -coverage,
 create the corresponding directories:
 
-	$ mkdir <your-project>/profile
-	$ mkdir <your-project>/coverage
+    $ mkdir <your-project>/profile
+    $ mkdir <your-project>/coverage
 
 and add the directories to your `.gitignore` file:
 
-	$ echo "/profile\n/coverage\n" >> <your-project>/.gitignore
+    $ echo "/profile\n/coverage\n" >> <your-project>/.gitignore
 
 for easier usage you can use the `make` command with the enclosed Makefile:
 
-	$ cp Makefile <your-project>
+    $ cp Makefile <your-project>
 
 please adjust it to your needs.
 
@@ -32,25 +32,35 @@ Symfony specific `.env.local` settings should be used like this:
 -   `APP_MAIL='dirk@localhost.test'`
 -   `APP_URI='https://localhost'`
 
+Since we use apache, do not forget to `composer require symfony/apache-pack` to add support for the webserver within
+your symfony-app and feel free to add some chaching to your static assets:
+
+    $ vi public/.htaccess
+    ...
+    <filesMatch ".(css|js|jpg|jpeg|png|gif|ico|woff2)$">
+    	Header set Cache-Control "max-age=31536000, public"
+    </filesMatch>
+    ...
+
 ## Usage
 
-	$ cd <your-project>
-	$ make clean # or make build to build the containers
-	$ make up # to start the containers
+    $ cd <your-project>
+    $ make clean # or make build to build the containers
+    $ make up # to start the containers
 
 or
 
-	$ make start # to build and start the containers
-	$ make sh # to connect with the web container
-	$ make mysql # to use the mysql-client with the database container
+    $ make start # to build and start the containers
+    $ make sh # to connect with the web container
+    $ make mysql # to use the mysql-client with the database container
 
 Please check the `Makefile` for additional shortcuts; anyway you can use `docker-compose` instead of the `make` command:
 
-	$ docker-compose build --pull --no-cache
-	$ docker-compose up --detach
-	$ docker-compose down --remove-orphans
-	$ docker-compose exec web bash
-	$ docker-compose exec database mysql
+    $ docker-compose build --pull --no-cache
+    $ docker-compose up --detach
+    $ docker-compose down --remove-orphans
+    $ docker-compose exec web bash
+    $ docker-compose exec database mysql
 
 and so on.
 
@@ -65,15 +75,15 @@ your locally installed mysql-client: `mysql --host 127.0.0.1 -u root` should wor
 
 Add the static analysis tool `psalm` to your installation and enable the symfony psalm plugin:
 
-	$ composer require --dev psalm/plugin-symfony
-	$ vendor/bin/psalm --init
-	$ vendor/bin/psalm-plugin enable psalm/plugin-symfony
-	$ make analysis
+    $ composer require --dev psalm/plugin-symfony
+    $ vendor/bin/psalm --init
+    $ vendor/bin/psalm-plugin enable psalm/plugin-symfony
+    $ make analysis
 
 Add `phpunit` to your project:
 
-	$ composer require --dev symfony/test-pack
-	$ php bin/phpunit
+    $ composer require --dev symfony/test-pack
+    $ php bin/phpunit
 
 to use `make test` update the corresponding `Makefile` section to your needs.
 
@@ -86,6 +96,5 @@ to use `make test` update the corresponding `Makefile` section to your needs.
 -   use docker-compose profile with different webserver and database engines
 -   add production profile / target with all builded artifacts, w/o anything uneeded for production
 -   https://symfony.com/doc/current/deployment.html#how-to-deploy-a-symfony-application
-
 
 License MIT
