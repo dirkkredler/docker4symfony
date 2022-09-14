@@ -56,8 +56,8 @@ and so on.
 
 The containers use the standard ports, please adjust the `docker-compose.yaml` file to your needs.
 
-The webserver https://localhost, the mailhog http://localhost:8025 and finally you
-can use your locally installed mysql-client: `mysql --host 127.0.0.1 -u root`
+The webserver https://localhost, the mailhog http://localhost:8025 and finally your
+your locally installed mysql-client: `mysql --host 127.0.0.1 -u root` should work now.
 
 ## WIP
 
