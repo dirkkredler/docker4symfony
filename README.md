@@ -1,5 +1,8 @@
 # Symfony and docker
 
+This is my docker setup i currently use in my symfony projects,
+heavily inspired by https://github.com/dunglas/symfony-docker
+
 ## Installation
 
     $ cp Dockerfile <your-project>
