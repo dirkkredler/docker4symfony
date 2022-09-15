@@ -5,6 +5,18 @@ heavily inspired by https://github.com/dunglas/symfony-docker
 
 ## Installation
 
+Add
+    `"repositories": [ 
+            { 
+                "type": "vcs", 
+                "url": "https://github.com/dirkkredler/docker4symfony" 
+            } 
+    ],`
+
+to your `composer.json` and add an entry under the `require` key:
+    `"dirkkredler/docker4symfony": "dev-main"` 
+
+    $ cd vendor/dirkkredler/symfony4docker
     $ cp Dockerfile <your-project>
     $ cp -r docker <your-project>
     $ cp docker-compose.yaml <your-project>
