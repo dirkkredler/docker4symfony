@@ -1,0 +1,14 @@
+{
+    "name": "dirkkredler/docker4symfony",
+    "description": "This is my docker setup i currently use in my symfony projects, heavily inspired by https://github.com/dunglas/symfony-docker",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dirk Kredler",
+            "email": "dirk.kredler@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
