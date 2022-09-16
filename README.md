@@ -5,7 +5,14 @@ heavily inspired by https://github.com/dunglas/symfony-docker
 
 ## Installation
 
-Add `"repositories": [ { "type": "vcs", "url": "https://github.com/dirkkredler/docker4symfony" } ],`
+Add
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/dirkkredler/docker4symfony"
+        }
+    ],
 
 to your `composer.json` and add an entry under the `require-dev` key: `"dirkkredler/docker4symfony": "dev-main"`
 
@@ -58,10 +65,10 @@ Remember to update your `config/doctrine.yaml` server version:
         dbal:
             url: "%env(resolve:DATABASE_URL)%"
             server_version: "5.7"
-    ... 
+    ...
 
 Remember to use the `make symfony` or `make doctrine` or the `docker-compose` equivalents for all commands, which need the correct environment
-to access docker containers or which uses services provided by docker. 
+to access docker containers or which uses services provided by docker.
 
 ## Usage
 
