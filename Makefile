@@ -62,18 +62,18 @@ vendor: composer
 autoload: ## composer dump-autoload
 	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
 
-env: ## composer dump-env given environment
+env: ## composer dump-env given environment; pass the "t=" parameter like "t=dev" (default), "t=test" or "t=prod" to specifiy an environment
 	@$(COMPOSER) dump-env $(t)
 
 ## Symfony
-symfony: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
+symfony: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: `make symfony c=about`
 	@$(eval c ?=)
 	@$(SYMFONY) $(c)
 
 cc: ## Clear the cache
 	@$(SYMFONY) c:c
 
-doctrine: ## to perform `symfony console doctrine:<command>` use eg. `make doctrine c="database:create"
+doctrine: ## to perform `symfony console doctrine:<command>` use eg. `make doctrine c="database:create"`
 	@$(SYMFONY) doctrine:$(c)
 
 ## App
