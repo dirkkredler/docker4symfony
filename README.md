@@ -32,6 +32,10 @@ for easier usage you should use the `make` command with the enclosed Makefile:
 
 please adjust it to your needs.
 
+After copying what you need, it is very safe to remove the package:
+
+    $ composer remove --dev dirkkredler/docker4symfony
+
 ## Notes
 
 Symfony specific `.env.local` settings should be used like this:
@@ -40,6 +44,9 @@ Symfony specific `.env.local` settings should be used like this:
 -   `DATABASE_URL='mysql://root:@database:3306/app?serverVersion=5.7'`
 -   `APP_MAIL='dirk@localhost.test'`
 -   `APP_URI='https://localhost'`
+
+The `doctrine` recipe will most likely mess with your `docker-compose.yaml` on installation, fix it by removing the parts the recipe
+added.
 
 Since we use apache, do not forget to `composer require symfony/apache-pack` to add support for the webserver within
 your symfony-app and feel free to add some caching to your static assets:
