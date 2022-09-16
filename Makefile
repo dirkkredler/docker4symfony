@@ -91,18 +91,18 @@ consume: ## Consume messenges
 
 ## Test
 
-psalm: ## Run static code analysis 
+psalm: ## Run static code analysis, use "s=<file or directory>" to analyse only the folder or file 
 	@$(PHP_CONT) ./vendor/bin/psalm --show-info=true $(s)
 
 psalm-cc: ## Run static code analysis and clear the cache
 	@$(PHP_CONT) ./vendor/bin/psalm --clear-cache
 
-test: ## Run tests and create code coverage information
+test: ## Run tests and create code coverage information, use "s=<file or directory>" to test only the folder or file
 	@$(COMPOSER) dump-env test
 	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=coverage/
 	@$(COMPOSER) dump-env dev
 
-test-with-database-reset: ## Run tests, reset the database and create code coverage information
+test-with-database-reset: ## Run tests, reset the database and create code coverage information, use "s=<file or directory>" to test only the folder or file
 	@$(COMPOSER) dump-env test
 	@$(SYMFONY) doctrine:database:drop --force --if-exists
 	@$(SYMFONY) doctrine:database:create
