@@ -59,10 +59,10 @@ vendor: ## Install vendors according to the current composer.lock file
 vendor: c=install
 vendor: composer
 
-autoload: ## composer dump-autoload
+autoload: ## Run `composer dump-autoload`
 	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
 
-env: ## composer dump-env given environment; pass the "t=" parameter like "t=dev" (default), "t=test" or "t=prod" to specifiy an environment
+env: ## Run `composer dump-env` with the given environment; pass the "t=" parameter like "t=dev" (default), "t=test" or "t=prod" to specifiy an environment
 	@$(COMPOSER) dump-env $(t)
 
 ## Symfony
@@ -73,34 +73,34 @@ symfony: ## List all Symfony commands or pass the parameter "c=" to run a given 
 cc: ## Clear the cache
 	@$(SYMFONY) c:c
 
-doctrine: ## to perform `symfony console doctrine:<command>` use eg. `make doctrine c="database:create"`
+doctrine: ## Perform `symfony console doctrine:<command>` use eg. `make doctrine c="database:create"`
 	@$(SYMFONY) doctrine:$(c)
 
 ## App
-setup: ## setup database for the given environment
+setup: ## Setup the database for the current environment
 	@$(SYMFONY) doctrine:database:drop --force --if-exists
 	@$(SYMFONY) doctrine:database:create
 	@$(SYMFONY) doctrine:schema:create
 	@$(SYMFONY) doctrine:fixtures:load --group=setup -n
 
-fixtures: ## doctrine load fixtures
+fixtures: ## Load the fixtures 
 	@$(SYMFONY) doctrine:fixtures:load --group=test -n
 
-migration: ## doctrine make migration
+migration: ## Make a migration 
 	@$(SYMFONY) make:migration
 
-migrate: ## doctrine make migrate
+migrate: ## Perform the migration 
 	@$(SYMFONY) doctrine:migrations:migrate
 
-consume: ## messenger consume
+consume: ## Consume messenges 
 	@$(SYMFONY) messenger:consume async async_priority_low failed -vv
 
-analyse: ## psalm static code analysis
+analyse: ## Run static code analysis 
 	@$(PHP_CONT) ./vendor/bin/psalm --show-info=true $(s)
-analyse-clear: ## psalm clear static analysis cache
+analyse-clear: ## Ruin static code analysis and clear the cache
 	@$(PHP_CONT) ./vendor/bin/psalm --clear-cache
 
-test: ## phpunit with code-coverage
+test: ## Run tests and create code coverage information
 	@$(COMPOSER) dump-env test
 	@$(SYMFONY) doctrine:database:drop --force --if-exists
 	@$(SYMFONY) doctrine:database:create
@@ -108,7 +108,7 @@ test: ## phpunit with code-coverage
 	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=coverage/
 	@$(COMPOSER) dump-env dev
 
-app: ## update dependencies and build the app
+app: ## Update dependencies and build the app
 	@$(COMPOSER) update
 	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
 	@$(COMPOSER) dump-env $(t)
@@ -124,5 +124,7 @@ app: ## update dependencies and build the app
 # @$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js
 # @$(PHP_CONT) yarn build
 
-fbuild: ## build the frontend
+fbuild: ## Build the frontend
 	@$(PHP_CONT) yarn build
+
+# vim: syntax=make
