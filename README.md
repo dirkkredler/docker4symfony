@@ -16,7 +16,7 @@ Add
 
 to your `composer.json` and add an entry under the `require-dev` key: `"dirkkredler/docker4symfony": "dev-main"`
 
-    $ composer install
+    $ composer update
     $ cd vendor/dirkkredler/symfony4docker
     $ cp Dockerfile <your-project>
     $ cp -r docker <your-project>
