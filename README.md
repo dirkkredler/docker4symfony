@@ -26,7 +26,7 @@ and add the directories to your `.gitignore` file:
 
     $ echo "/profile\n/coverage\n" >> .gitignore
 
-for easier usage you should the `make` command with the enclosed Makefile:
+for easier usage you should use the `make` command with the enclosed Makefile:
 
     $ cp vendor/dirkkredler/docker4symfony/Makefile .
 
