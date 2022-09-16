@@ -17,25 +17,18 @@ Add
 to your `composer.json` and add an entry under the `require-dev` key: `"dirkkredler/docker4symfony": "dev-main"`
 
     $ composer update
-    $ cd vendor/dirkkredler/symfony4docker
-    $ cp Dockerfile <your-project>
-    $ cp -r docker <your-project>
-    $ cp docker-compose.yaml <your-project>
-    $ cp .dockerignore <your-project>
-
-if you would like to use the xdebug-profiler and -coverage,
-create the corresponding directories:
-
-    $ mkdir <your-project>/profile
-    $ mkdir <your-project>/coverage
+    $ cp -r vendor/dirkkredler/docker4symfony/docker .
+    $ cp vendor/dirkkredler/docker4symfony/Dockerfile .
+    $ cp vendor/dirkkredler/docker4symfony/docker-compose.yaml .
+    $ cp vendor/dirkkredler/docker4symfony/.dockerignore .
 
 and add the directories to your `.gitignore` file:
 
-    $ echo "/profile\n/coverage\n" >> <your-project>/.gitignore
+    $ echo "/profile\n/coverage\n" >> .gitignore
 
-for easier usage you can use the `make` command with the enclosed Makefile:
+for easier usage you can should the `make` command with the enclosed Makefile:
 
-    $ cp Makefile <your-project>
+    $ cp vendor/dirkkredler/docker4symfony/Makefile .
 
 please adjust it to your needs.
 
@@ -106,21 +99,19 @@ Add the static analysis tool `psalm` to your installation and enable the symfony
     $ composer require --dev psalm/plugin-symfony
     $ vendor/bin/psalm --init
     $ vendor/bin/psalm-plugin enable psalm/plugin-symfony
-    $ make analysis
+    $ make psalm
 
 Add `phpunit` to your project:
 
     $ composer require --dev symfony/test-pack
     $ php bin/phpunit
-
-to use `make test` update the corresponding `Makefile` section to your needs.
+    $ make test
 
 ## WIP
 
 ### TODO
 
 -   add an installer script
--   update Makefile with migration, tests and fixtures etc.
 -   use docker-compose profile with different webserver and database engines
--   add production profile / target with all builded artifacts, w/o anything uneeded for production
--   https://symfony.com/doc/current/deployment.html#how-to-deploy-a-symfony-application
+-   multi-build: add production profile / target with all builded artifacts, w/o anything uneeded for production
+-   add nginx, elasticsearch
