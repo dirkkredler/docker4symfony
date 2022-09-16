@@ -2,6 +2,7 @@ SHELL := /bin/bash
 
 t ?= dev
 s ?=
+c ?=
 
 # Executables (local)
 DOCKER_COMP = docker-compose
@@ -17,7 +18,7 @@ SYMFONY  = $(PHP_CONT) symfony console
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        = help build clean up start down logs sh mysql chown composer vendor autoload env sf cc setup fixtures migration migrate consume test analyse analyse-clear app fbuild
+.PHONY        = help build clean up start down logs sh mysql chown composer vendor autoload env symfony cc doctrine setup fixtures migration migrate consume test analyse analyse-clear app fbuild
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -65,21 +66,22 @@ env: ## composer dump-env given environment
 	@$(COMPOSER) dump-env $(t)
 
 ## Symfony
-sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
+symfony: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
 	@$(eval c ?=)
 	@$(SYMFONY) $(c)
 
 cc: ## Clear the cache
 	@$(SYMFONY) c:c
 
-### App
+doctrine: ## to perform `symfony console doctrine:<command>` use eg. `make doctrine c="database:create"
+	@$(SYMFONY) doctrine:$(c)
+
+## App
 setup: ## setup database for the given environment
 	@$(SYMFONY) doctrine:database:drop --force --if-exists
 	@$(SYMFONY) doctrine:database:create
 	@$(SYMFONY) doctrine:schema:create
 	@$(SYMFONY) doctrine:fixtures:load --group=setup -n
-	@$(SYMFONY) app:search --reset
-	rm public/dokument/*
 
 fixtures: ## doctrine load fixtures
 	@$(SYMFONY) doctrine:fixtures:load --group=test -n
@@ -119,8 +121,8 @@ app: ## update dependencies and build the app
 # `yarn --cwd node_modules/fomantic-ui run install`
 #
 # adjust src/site/globals/site.variables to your needs
-	@$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js
-	@$(PHP_CONT) yarn build
+# @$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js
+# @$(PHP_CONT) yarn build
 
 fbuild: ## build the frontend
 	@$(PHP_CONT) yarn build
