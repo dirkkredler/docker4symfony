@@ -51,6 +51,17 @@ your symfony-app and feel free to add some caching to your static assets:
     </filesMatch>
     ...
 
+Remember to update your `config/doctrine.yaml` server version:
+    $ vi config/doctrine.yaml
+    doctrine:
+        dbal:
+            url: "%env(resolve:DATABASE_URL)%"
+            server_version: "5.7"
+    ... 
+
+Remember to use the `make symfony` or `make doctrine` or the docker-compose equivalents for all commands, which need the correct environment,
+to access docker containers or uses the services provided by docker. 
+
 ## Usage
 
     $ cd <your-project>
