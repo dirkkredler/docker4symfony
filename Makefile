@@ -18,7 +18,7 @@ SYMFONY  = $(PHP_CONT) symfony console
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        = help build clean up start down logs sh mysql chown composer vendor autoload env symfony cc doctrine setup fixtures migration migrate consume test analyse analyse-clear app fbuild
+.PHONY        = help build clean up start down logs sh mysql chown composer install update dump-autoload dump-env symfony cc doctrine migration migrate consume fixtures psalm psalm-cc test test-with-database-reset setup app yarn-build yarn-watch
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -55,14 +55,18 @@ composer: ## Run composer, pass the parameter "c=" to run a given command, examp
 	@$(eval c ?=)
 	@$(COMPOSER) $(c)
 
-vendor: ## Install vendors according to the current composer.lock file
-vendor: c=install
-vendor: composer
+install: ## Install vendors according to the current composer.lock file
+install: c=install
+install: composer
 
-autoload: ## Run `composer dump-autoload`
+update: ## Update vendors according to the current composer.json file
+update: c=update
+update: composer
+
+dump-autoload: ## Run `composer dump-autoload`
 	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
 
-env: ## Run `composer dump-env` with the given environment; pass the "t=" parameter like "t=dev" (default), "t=test" or "t=prod" to specifiy an environment
+dump-env: ## Run `composer dump-env` with the given environment; pass the "t=" parameter like "t=dev" (default), "t=test" or "t=prod" to specifiy an environment
 	@$(COMPOSER) dump-env $(t)
 
 ## Symfony
@@ -76,16 +80,6 @@ cc: ## Clear the cache
 doctrine: ## Perform `symfony console doctrine:<command>` use eg. `make doctrine c="database:create"`
 	@$(SYMFONY) doctrine:$(c)
 
-## App
-setup: ## Setup the database for the current environment
-	@$(SYMFONY) doctrine:database:drop --force --if-exists
-	@$(SYMFONY) doctrine:database:create
-	@$(SYMFONY) doctrine:schema:create
-	@$(SYMFONY) doctrine:fixtures:load --group=setup -n
-
-fixtures: ## Load the fixtures 
-	@$(SYMFONY) doctrine:fixtures:load --group=test -n
-
 migration: ## Make a migration 
 	@$(SYMFONY) make:migration
 
@@ -95,12 +89,20 @@ migrate: ## Perform the migration
 consume: ## Consume messenges 
 	@$(SYMFONY) messenger:consume async async_priority_low failed -vv
 
-analyse: ## Run static code analysis 
+## Test
+
+psalm: ## Run static code analysis 
 	@$(PHP_CONT) ./vendor/bin/psalm --show-info=true $(s)
-analyse-clear: ## Ruin static code analysis and clear the cache
+
+psalm-cc: ## Run static code analysis and clear the cache
 	@$(PHP_CONT) ./vendor/bin/psalm --clear-cache
 
 test: ## Run tests and create code coverage information
+	@$(COMPOSER) dump-env test
+	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=coverage/
+	@$(COMPOSER) dump-env dev
+
+test-with-database-reset: ## Run tests, reset the database and create code coverage information
 	@$(COMPOSER) dump-env test
 	@$(SYMFONY) doctrine:database:drop --force --if-exists
 	@$(SYMFONY) doctrine:database:create
@@ -108,7 +110,17 @@ test: ## Run tests and create code coverage information
 	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=coverage/
 	@$(COMPOSER) dump-env dev
 
-app: ## Update dependencies and build the app
+fixtures: ## Load the demo or test fixtures 
+	@$(SYMFONY) doctrine:fixtures:load --group=test -n
+
+## App
+setup: ## Setup the database for the current environment
+	@$(SYMFONY) doctrine:database:drop --force --if-exists
+	@$(SYMFONY) doctrine:database:create
+	@$(SYMFONY) doctrine:schema:create
+	@$(SYMFONY) doctrine:fixtures:load --group=setup -n
+
+app: ## Update dependencies and build the app for the given environment; pass the "t=" parameter like "t=dev" (default), "t=test" or "t=prod" to specifiy an environment
 	@$(COMPOSER) update
 	@$(COMPOSER) dump-autoload --optimize --classmap-authoritative
 	@$(COMPOSER) dump-env $(t)
@@ -116,15 +128,19 @@ app: ## Update dependencies and build the app
 	@$(SYMFONY) assets:install
 	@$(PHP_CONT) yarn install --force
 	@$(PHP_CONT) yarn upgrade
+	@$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js
+	@$(PHP_CONT) yarn build
+
 # to initially install fomantic-ui use:
 # `yarn add fomantic-ui --ignore-scripts`
 # `yarn --cwd node_modules/fomantic-ui run install`
 #
 # adjust src/site/globals/site.variables to your needs
-# @$(PHP_CONT) npx gulp build --gulpfile=semantic/gulpfile.js
-# @$(PHP_CONT) yarn build
 
-fbuild: ## Build the frontend
+yarn-build: ## Build the frontend
 	@$(PHP_CONT) yarn build
+
+yarn-watch: ## Watch any changes and build the frontend
+	@$(PHP_CONT) yarn watch
 
 # vim: syntax=make
