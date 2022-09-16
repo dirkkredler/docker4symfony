@@ -52,6 +52,7 @@ your symfony-app and feel free to add some caching to your static assets:
     ...
 
 Remember to update your `config/doctrine.yaml` server version:
+
     $ vi config/doctrine.yaml
     doctrine:
         dbal:
