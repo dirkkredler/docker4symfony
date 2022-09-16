@@ -60,8 +60,8 @@ Remember to update your `config/doctrine.yaml` server version:
             server_version: "5.7"
     ... 
 
-Remember to use the `make symfony` or `make doctrine` or the docker-compose equivalents for all commands, which need the correct environment,
-to access docker containers or uses the services provided by docker. 
+Remember to use the `make symfony` or `make doctrine` or the `docker-compose` equivalents for all commands, which need the correct environment
+to access docker containers or which uses services provided by docker. 
 
 ## Usage
 
