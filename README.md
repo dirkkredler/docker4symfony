@@ -119,6 +119,7 @@ Add `phpunit` to your project:
 ### TODO
 
 -   add an installer script
--   use docker-compose profile with different webserver and database engines
--   multi-build: add production profile / target with all builded artifacts, w/o anything uneeded for production
 -   add nginx, elasticsearch
+-   use profiles
+-   use `.env` or local environment variables for config
+-   multi-build: add production profile / target with all builded artifacts, w/o anything uneeded for production
