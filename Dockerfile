@@ -34,6 +34,7 @@ RUN apt-get update && apt-get install -y \
   libgd-dev \
   libicu-dev \
   libonig-dev \
+  libsqlite3-dev \
   libzip-dev \
   make \
   ssl-cert \
@@ -58,6 +59,7 @@ RUN docker-php-ext-configure zip && docker-php-ext-install \
   mysqli \
   opcache \
   pdo_mysql \
+  pdo_sqlite \
   zip
 
 RUN pecl install apcu && docker-php-ext-enable apcu \
