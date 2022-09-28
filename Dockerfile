@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y \
   make \
   ssl-cert \
   symfony-cli \
+  unzip \
   && rm -rf /var/lib/apt/lists/*
 
 # HTTPD
