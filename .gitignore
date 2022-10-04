@@ -1,4 +1,7 @@
-/profile
-/coverage
+/profile/
+/coverage/
 
 /vendor/
+/node_modules/
+
+/.yarn.lock
