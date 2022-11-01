@@ -30,6 +30,7 @@ COPY --from=composer:2.3 /usr/bin/composer /usr/bin/composer
 RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list
 
 # PACKAGES
+# add `libxrender-dev` for wkhtmltopdf
 RUN apt-get update && apt-get install -y \
   libgd-dev \
   libicu-dev \
