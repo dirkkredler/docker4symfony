@@ -1,4 +1,4 @@
-FROM php:8.1-apache AS base
+FROM php:8.2-apache AS base
 
 # USER to change the application data in the container
 ARG UNAME=dev
@@ -24,7 +24,7 @@ RUN curl https://nodejs.org/dist/v$NODE_VERSION/$NODE_PACKAGE.tar.gz | tar -xzC 
   && npm install -g yarn
 
 # COMPOSER
-COPY --from=composer:2.3 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.4 /usr/bin/composer /usr/bin/composer
 
 # SYMFONY
 RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list
