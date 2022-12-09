@@ -12,7 +12,7 @@ ENV UID=$UID
 ENV GID=$GID
 
 # NODE
-ARG NODE_VERSION=18.12.0
+ARG NODE_VERSION=18.12.1
 ARG NODE_ARCH=linux-x64
 ARG NODE_PACKAGE=node-v$NODE_VERSION-$NODE_ARCH
 ARG NODE_HOME=/opt/$NODE_PACKAGE
@@ -21,6 +21,7 @@ ENV NODE_PATH $NODE_HOME/lib/node_modules
 ENV PATH $NODE_HOME/bin:$PATH
 
 RUN curl https://nodejs.org/dist/v$NODE_VERSION/$NODE_PACKAGE.tar.gz | tar -xzC /opt/ \
+  && npm install -g npm@9.2 \
   && npm install -g yarn
 
 # COMPOSER
