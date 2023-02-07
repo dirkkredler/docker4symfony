@@ -14,7 +14,6 @@ services:
         restart: on-failure
         ports:
             - 8025:8025
-
     web:
         build:
             context: .
