@@ -25,7 +25,7 @@ RUN curl https://nodejs.org/dist/v$NODE_VERSION/$NODE_PACKAGE.tar.gz | tar -xzC 
   && npm install -g yarn
 
 # COMPOSER
-COPY --from=composer:2.4 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
 
 # SYMFONY
 RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list
@@ -65,25 +65,22 @@ RUN docker-php-ext-configure zip && docker-php-ext-install \
   pdo_sqlite \
   zip
 
-RUN pecl install apcu && docker-php-ext-enable apcu \
-  && printf "%s\n" "apc.enabled=1" "apc.enable_cli=1" >> "$PHP_INI_DIR/conf.d/docker-php-ext-apcu.ini" 
-
-RUN printf "%s\n" "[PHP]" "date.timezone='Europe/Berlin'" > "$PHP_INI_DIR/conf.d/tzone.ini"
+RUN pecl install apcu && docker-php-ext-enable apcu
+COPY docker/apcu.ini "$PHP_INI_DIR/conf.d/"
+COPY docker/tzone.ini "$PHP_INI_DIR/conf.d/"
 
 RUN ln -s "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-
 COPY docker/symfony.dev.ini "$PHP_INI_DIR/conf.d/"
 
 # APPLICATION DATA
 WORKDIR /var/www
 
-# DEBUG trigger profiling with ?XDEBUG_TRIGGER the output_dir must be writeable
 FROM base as debug
 
-ARG XDEBUG_MODE="coverage,profile"
+ENV XDEBUG_MODE=off
 
-RUN pecl install xdebug && docker-php-ext-enable xdebug \
-    && printf "%s\n" "[Xdebug]" "xdebug.mode=$XDEBUG_MODE" "xdebug.output_dir=/var/www/profile" "xdebug.start_with_request=trigger" > "$PHP_INI_DIR/conf.d/xdebug.ini"
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+COPY docker/xdebug.ini "$PHP_INI_DIR/conf.d/"
 
 # SERVICE
 CMD [ "apache2-foreground" ]

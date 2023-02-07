@@ -14,6 +14,7 @@ services:
         restart: on-failure
         ports:
             - 8025:8025
+
     web:
         build:
             context: .
@@ -25,7 +26,15 @@ services:
             # - GID=1000
             # - NODE_VERSION=18.x.x
             # - NODE_ARCH=linux-x64
-            # - XDEBUG_MODE=coverage,profile
+        environment:
+            # set the `XDEBUG_MODE` env in your shell, than start or restart your container:
+            #
+            # `export XDEBUG_MODE=<mode>` where mode is a comma-separated combination from:
+            #   `off|develop|debug|coverage|profile|trace`
+            # `XDEBUG_MODE` defaults to `off`
+            #
+            # the xdebug output dir is set to './docker/tmp'.
+            XDEBUG_MODE: ${XDEBUG_MODE:-off}
         restart: on-failure
         depends_on:
             - database
@@ -38,6 +47,9 @@ services:
             - 443:443
         volumes:
             - ./:/var/www
+            - ./docker/tmp:/tmp
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
 volumes:
     database_data:

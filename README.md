@@ -67,7 +67,7 @@ Remember to update your `config/doctrine.yaml` server version:
             server_version: "5.7"
     ...
 
-Remember to use the `make symfony` or `make doctrine` or the `docker-compose` equivalents for all commands, which need the correct environment
+Remember to use the `make symfony` or `make doctrine` or the `docker compose` equivalents for all commands, which need the correct environment
 to access docker containers or which uses services provided by docker.
 
 ## Usage
@@ -82,13 +82,13 @@ or
     $ make sh # to connect with the web container
     $ make mysql # to use the mysql-client with the database container
 
-Please check the `Makefile` for additional shortcuts; anyway you can use `docker-compose` instead of the `make` command:
+Please check the `Makefile` for additional shortcuts; anyway you can use `docker compose` instead of the `make` command:
 
-    $ docker-compose build --pull --no-cache
-    $ docker-compose up --detach
-    $ docker-compose down --remove-orphans
-    $ docker-compose exec web bash
-    $ docker-compose exec database mysql
+    $ docker compose build --pull --no-cache
+    $ docker compose up --detach
+    $ docker compose down --remove-orphans
+    $ docker compose exec web bash
+    $ docker compose exec database mysql
 
 and so on.
 
@@ -119,7 +119,6 @@ Add `phpunit` to your project:
 ### TODO
 
 -   add an installer script
--   add nginx, elasticsearch
+-   add nginx, elasticsearch, redis
 -   use profiles
 -   use `.env` or local environment variables for config
--   multi-build: add production profile / target with all builded artifacts, w/o anything uneeded for production

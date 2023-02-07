@@ -5,7 +5,7 @@ s ?=
 c ?=
 
 # Executables (local)
-DOCKER_COMP = docker-compose
+DOCKER_COMP = docker compose
 
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec web
@@ -99,7 +99,7 @@ psalm-cc: ## Clear static code analysis cache
 
 test: ## Run tests and create code coverage information, use "s=<file or directory>" to test only the folder or file
 	@$(COMPOSER) dump-env test
-	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=coverage/
+	@$(PHP_CONT) ./vendor/bin/phpunit -d memory_limit=256M $(s) --testdox --coverage-html=tmp/
 	@$(COMPOSER) dump-env dev
 
 test-with-database-reset: ## Run tests, reset the database and create code coverage information, use "s=<file or directory>" to test only the folder or file
